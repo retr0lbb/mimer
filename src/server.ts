@@ -1,11 +1,13 @@
 import fastify from "fastify";
-import { db } from "./db/index.ts";
+import {tenantRoutes} from "./modules/tenant/tenant.route.ts"
 
 const app = fastify()
 
 app.get("/", async(request, reply) => {
     reply.status(200).send({ok: true})
 })
+
+app.register(tenantRoutes)
 
 app.listen({
     port: 3333,

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node --experimental-strip-types --experimental-specifier-resolution=node --env-file=.env --watch src/server.ts"
+    "node:dev": "node --experimental-strip-types --experimental-specifier-resolution=node --env-file=.env --watch src/server.ts",
+    "dev": "tsx --env-file=.env src/server.ts"
   },
   "repository": {
     "type": "git",

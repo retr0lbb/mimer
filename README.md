@@ -17,6 +17,7 @@ Yes i use readme.md to organize my tasks so i don't get messed up
         2.2.1 CREATE TENANT MODEL [✅]
         2.2.2 CREATE CONVERSATIONS MODEL [✅]
         2.2.3 CREATE MESSAGES MODEL [✅]
-        2.2.4 CREATE REPOSITORY STRATEGY <---- CURRENT
+        2.2.4 CREATE REPOSITORY STRATEGY [✅] 
+    2.3 Create Routes [] <---- CURRENT
 3. [ ] CONNECT IA.
 4. [ ] CONNECT APP MESSAGING SYSTEM.
