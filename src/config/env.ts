@@ -2,7 +2,7 @@ import z from "zod/v4"
 
 
 const ENV_SCHEMA = z.object({
-    PORT: z.number().int().positive(),
+    PORT: z.coerce.number().int().positive(),
     DATABASE_URL: z.url()
 })
 

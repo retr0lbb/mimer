@@ -4,12 +4,14 @@
 
   "compilerOptions": {
     "lib": ["es2024", "ESNext.Array", "ESNext.Collection", "ESNext.Iterator"],
-    "module": "nodenext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "target": "es2022",
 
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node16"
   }
 }

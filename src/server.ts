@@ -1,6 +1,11 @@
 import fastify from "fastify";
+import { db } from "./db/index.ts";
 
 const app = fastify()
+
+app.get("/", async(request, reply) => {
+    reply.status(200).send({ok: true})
+})
 
 app.listen({
     port: 3333,
