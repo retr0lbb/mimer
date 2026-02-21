@@ -7,5 +7,4 @@ export const CreateTenantDTO = z.object({
 })
 export type CreateTenantDTO = z.infer<typeof CreateTenantDTO> & {
     apiKey: string,
-    
 } 
