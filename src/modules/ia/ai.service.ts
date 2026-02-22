@@ -4,13 +4,17 @@ import { aiProviderFactory } from "./ai.provider.factory.ts";
 
 export class AIService{
     async chat(request: FastifyRequest, message: string){
-        const tenant = "test.mock"
+        const tenant = request.tenant
+
+        if(!tenant){
+            throw new Error("Tenant not found")
+        }
 
         const provider = aiProviderFactory()
 
         const response = await provider.chat({
             message,
-            tenantId: tenant
+            tenantId: tenant.name ?? "GIBRALTAR"
         })
 
         return response
@@ -38,7 +42,7 @@ export class AIService{
         try {
             await provider.stream({
                 message,
-                tenantId: request.tenant.name,
+                tenantId: request.tenant.name ?? "GIBRALTAR",
                 onChunk: (chunk) => {
                         reply.raw.write(`data: ${chunk}\n\n`)
                     },

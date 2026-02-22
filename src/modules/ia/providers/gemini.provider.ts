@@ -19,7 +19,7 @@ export class GeminiProvider implements AIProvider {
           role: "user",
           parts: [
             {
-              text: `Você é uma IA para o tenant PICBRANDLTA. Responda: ${input.message}`,
+              text: `Você é uma IA para o tenant ${input.tenantId}. Responda: ${input.message}`,
             },
           ],
         },
@@ -44,7 +44,7 @@ export class GeminiProvider implements AIProvider {
           role: "user",
           parts: [
             {
-              text: `Você é uma IA para o tenant PICBRANDLTA. Responda: ${input.message}`,
+              text: `Você é uma IA para o tenant ${input.tenantId}. Responda: ${input.message}`,
             },
           ],
         },
