@@ -8,7 +8,13 @@ export class AIController{
         const {message} = request.body as {message: string};
 
         const result = await this.aiService.chat(request, message)
-        
+
         return reply.send({response: result})
+    }
+
+    stream = async(request: FastifyRequest, reply: FastifyReply) => {
+        const {message} = request.body as {message: string};
+
+        return this.aiService.stream(request, message, reply)
     }
 }

@@ -7,4 +7,5 @@ export async function aiRoutes(app: FastifyInstance) {
     const controller = new AIController(service);
 
     app.post("/ai/chat", controller.chat )
+    app.post("/ai/stream", controller.stream)
 }
