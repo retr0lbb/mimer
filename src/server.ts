@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import {tenantRoutes} from "./modules/tenant/tenant.route.ts"
+import { aiRoutes } from "./modules/ia/ia.route.ts";
 
 const app = fastify()
 
@@ -8,6 +9,7 @@ app.get("/", async(request, reply) => {
 })
 
 app.register(tenantRoutes)
+app.register(aiRoutes)
 
 app.listen({
     port: 3333,

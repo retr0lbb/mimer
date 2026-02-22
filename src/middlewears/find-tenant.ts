@@ -3,7 +3,6 @@ import { db } from "../db/index.ts"
 import {tenants} from "../db/schemas/tenant.ts"
 import { eq } from "drizzle-orm";
 
-
 export async function findTenantPlugin(app: FastifyInstance){
     app.addHook("preHandler", async (req, rep) => {
         try {
