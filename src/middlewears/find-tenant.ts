@@ -7,9 +7,6 @@ import { eq } from "drizzle-orm"
 export async function findTenantPlugin(request: FastifyRequest, reply: FastifyReply) {
     try {
       const tenantId = request.headers["x-tenant-id"]
-
-      console.log("MEMES")
-
       if (!tenantId || typeof tenantId !== "string") {
         return reply.status(401).send({ error: "Missing tenant id" })
       }
