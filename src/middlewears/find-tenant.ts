@@ -1,32 +1,32 @@
-import type { FastifyInstance } from "fastify";
+import fp from "fastify-plugin"
+import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify"
 import { db } from "../db/index.ts"
-import {tenants} from "../db/schemas/tenant.ts"
-import { eq } from "drizzle-orm";
+import { tenants } from "../db/schemas/tenant.ts"
+import { eq } from "drizzle-orm"
 
-export async function findTenantPlugin(app: FastifyInstance){
-    app.addHook("preHandler", async (req, rep) => {
-        try {
-            const tenantId = req.headers["x-tenant-id"]
+export async function findTenantPlugin(request: FastifyRequest, reply: FastifyReply) {
+    try {
+      const tenantId = request.headers["x-tenant-id"]
 
-            if(!tenantId){
-                throw new Error("Tenant not found")
-            }
+      console.log("MEMES")
 
-            if(typeof tenantId !== "string" ){
-                throw new Error("More than one tenant id passed")
-            }
+      if (!tenantId || typeof tenantId !== "string") {
+        return reply.status(401).send({ error: "Missing tenant id" })
+      }
 
-            const tenant = await db.select().from(tenants).where(eq(tenants.apiKey, tenantId))
+      const result = await db
+        .select()
+        .from(tenants)
+        .where(eq(tenants.apiKey, tenantId))
 
-            if(!tenant || tenant.length > 1){
-                throw new Error("Tenant not found or duplicated tenants found")
-            }
+      if (!result || result.length !== 1) {
+        return reply.status(404).send({ error: "Tenant not found" })
+      }
 
-            return { tenant }
-            
-        } catch (error) {
-            console.log(error)
-            return rep.status(500).send({error})
-        }
-    })
+      request.tenant = result[0]
+
+    } catch (error) {
+      console.error(error)
+      return reply.status(500).send({ error: "Internal error" })
+    }
 }

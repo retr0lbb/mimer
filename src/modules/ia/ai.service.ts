@@ -17,13 +17,16 @@ export class AIService{
     }
 
     async stream(request: FastifyRequest, message: string, reply: FastifyReply) {
+        if(!request.tenant){
+            throw new Error("Tenant not found")
+
+        }
         const provider = aiProviderFactory()
 
         if (!provider.stream) {
             throw new Error("Stream not implemented for this provider")
         }
 
-        // 👇 MUITO IMPORTANTE
         reply.hijack()
 
         reply.raw.setHeader("Content-Type", "text/event-stream")
@@ -35,7 +38,7 @@ export class AIService{
         try {
             await provider.stream({
                 message,
-                tenantId: "test11",
+                tenantId: request.tenant.name,
                 onChunk: (chunk) => {
                         reply.raw.write(`data: ${chunk}\n\n`)
                     },

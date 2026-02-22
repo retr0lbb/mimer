@@ -4,7 +4,7 @@ import { aiRoutes } from "./modules/ia/ia.route.ts";
 
 const app = fastify()
 
-app.get("/", async(request, reply) => {
+app.get("/", async(_, reply) => {
     reply.status(200).send({ok: true})
 })
 
