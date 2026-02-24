@@ -8,6 +8,8 @@ export class AIService{
     async chat(request: FastifyRequest, message: string){
         const tenant = request.tenant
 
+        console.log(tenant)
+
         if(!tenant){
             throw new Error("Tenant not found")
         }
