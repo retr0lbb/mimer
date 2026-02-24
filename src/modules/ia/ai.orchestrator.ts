@@ -1,87 +1,81 @@
-import { AIMessage, AITool } from "./ai.types.ts";
-import {ProviderFactory} from "./providers/ai.provider.factory.ts"
+import type { AIMessage, AITool } from "./ai.types.ts";
+import type { ProviderFactory } from "./providers/ai.provider.factory.ts";
 
-export class AIOrchestrator{
-    constructor(private providerFactory: ProviderFactory){
+export class AIOrchestrator {
+	constructor(private providerFactory: ProviderFactory) {}
 
-    }
+	async run(input: {
+		tenantId: string;
+		messages: AIMessage[];
+		tools?: AITool[];
+		providerName: string;
+	}) {
+		const provider = this.providerFactory.create(input.providerName);
 
-    async run(input: {
-        tenantId: string,
-        messages: AIMessage[],
-        tools?: AITool[],
-        providerName: string
-    }){
-        const provider = this.providerFactory.create(input.providerName)
+		const context = [...input.messages];
 
-        const context = [...input.messages]
+		let iterations = 0;
 
-        let iterations = 0
+		while (iterations < 5) {
+			const response = await provider.generate({
+				messages: context,
+				tools: input.tools,
+			});
 
-        while (iterations < 5){
-            const response = await provider.generate({
-                messages: context,
-                tools: input.tools
-            })
+			if (response.toolCall) {
+				throw new Error("Not Implemented");
+			}
 
-            if(response.toolCall){
-                //TODO implement TOOL EXECUTOR
+			return {
+				type: "final",
+				content: response.text,
+			};
+		}
 
-                iterations++
-                continue
-            }
+		throw new Error("Too Many Interations");
+	}
 
+	async runStream(input: {
+		tenantId: string;
+		providerName: string;
+		messages: AIMessage[];
+		tools?: AITool[];
+		onChunk: (chunk: string) => void;
+	}) {
+		const provider = this.providerFactory.create(input.providerName);
 
-            return {
-                type: "final",
-                content: response.text
-            }
-        }
+		if (!provider.generateStream) {
+			throw new Error("Stream not supported by provider");
+		}
 
-        throw new Error("Too Many Interations")
-    }
+		const context = [...input.messages];
 
-    async runStream(input: {
-  tenantId: string
-  providerName: string
-  messages: AIMessage[]
-  tools?: AITool[]
-  onChunk: (chunk: string) => void
-}) {
-  const provider = this.providerFactory.create(input.providerName)
+		if (input.tools && input.tools.length > 0) {
+			const result = await this.run({
+				tenantId: input.tenantId,
+				providerName: input.providerName,
+				messages: context,
+				tools: input.tools,
+			});
 
-  if (!provider.generateStream) {
-    throw new Error("Stream not supported by provider")
-  }
+			if (result.type === "final" && result.content) {
+				input.onChunk(result.content);
+			}
 
-  const context = [...input.messages]
+			return result;
+		}
 
-  if (input.tools && input.tools.length > 0) {
-    const result = await this.run({
-      tenantId: input.tenantId,
-      providerName: input.providerName,
-      messages: context,
-      tools: input.tools
-    })
+		const response = await provider.generateStream({
+			messages: context,
+			tools: input.tools,
+			onChunk: (chunk) => {
+				input.onChunk(chunk);
+			},
+		});
 
-    if (result.type === "final" && result.content) {
-      input.onChunk(result.content)
-    }
-
-    return result
-  }
-
-  const response = await provider.generateStream({
-    messages: context,
-    tools: input.tools,
-    onChunk: (chunk) => {
-      input.onChunk(chunk)
-    }
-  })
-
-  return {
-    type: "final",
-    content: response.text
-  }
-}
+		return {
+			type: "final",
+			content: response.text,
+		};
+	}
 }
