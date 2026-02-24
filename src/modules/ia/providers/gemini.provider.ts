@@ -1,4 +1,5 @@
-import { AIProvider } from "../ai.provider.interface.ts";
+import { AIMessage, AITool, AIProviderResponse } from "../ai.types.ts";
+import { AIProvider } from "./ai.provider.interface.ts";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export class GeminiProvider implements AIProvider {
@@ -8,58 +9,13 @@ export class GeminiProvider implements AIProvider {
     this.client = new GoogleGenerativeAI(googleApiKey);
   }
 
-  async chat(input: { message: string; tenantId: string }): Promise<string> {
-    const model = this.client.getGenerativeModel({
-      model: "gemini-2.5-flash-lite",
-    });
+  async generate(input: { messages: AIMessage[]; tools?: AITool[]; stream?: boolean; }): Promise<AIProviderResponse> {
+    
 
-    const result = await model.generateContent({
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: `Você é uma IA para o tenant ${input.tenantId}. Responda: ${input.message}`,
-            },
-          ],
-        },
-      ],
-    });
-
-    return result.response.text();
-  }
-
-  async stream(input: {
-    message: string;
-    tenantId: string;
-    onChunk: (chunk: string) => void;
-  }) {
-    const model = this.client.getGenerativeModel({
-      model: "gemini-2.5-flash-lite",
-    });
-
-    const result = await model.generateContentStream({
-      contents: [
-        {
-          role: "user",
-          parts: [
-            {
-              text: `Você é uma IA para o tenant ${input.tenantId}. Responda: ${input.message}`,
-            },
-          ],
-        },
-      ],
-    });
-
-    let accumulated = "";
-
-    for await (const chunk of result.stream) {
-        const text = chunk.text();
-        if (text) {
-            accumulated += text;
-            input.onChunk(text);
-        }
-    }
+    return {
+      finishReason: "tool_call",
+      text: "Ola eu sou uma interpretação de IA de GEMINI AI"
+    } as AIProviderResponse
   }
 }
 

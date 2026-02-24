@@ -1,4 +1,5 @@
-import {AIProvider} from "../ai.provider.interface.ts"
+import { AIMessage, AITool, AIProviderResponse } from "../ai.types.ts";
+import {AIProvider} from "./ai.provider.interface.ts"
 import OpenAI from "openai"
 
 export class OpenAIProvider implements AIProvider{
@@ -8,22 +9,7 @@ export class OpenAIProvider implements AIProvider{
         this.client = new OpenAI({apiKey: openIaKey})
     }
 
-    async chat(input: { message: string; tenantId: string; }): Promise<string> {
-        const response = await this.client.chat.completions.create({
-            model: "gpt-4o-mini",
-            messages: [
-                {
-                    role: "system",
-                    content: "You are an AI assistant for tenant picbrandLTA"
-                },
-                {
-                    role: "user",
-                    content: input.message
-                }
-            ]
-        })
-
-
-        return response.choices[0].message.content ?? ''
+    async generate(input: { messages: AIMessage[]; tools?: AITool[]; stream?: boolean; }): Promise<AIProviderResponse> {
+        return {finishReason: "stop", text: "Ola eu sou uma interpretação de OPENAI CHATGPT"}
     }
 }
