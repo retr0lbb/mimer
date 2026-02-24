@@ -64,5 +64,38 @@ export class GeminiProvider implements AIProvider {
       text: response.text()
     } as AIProviderResponse
   }
+
+  async generateStream(input: {
+    messages: AIMessage[]
+    tools?: AITool[]
+    onChunk: (chunk: string) => void
+  }): Promise<AIProviderResponse> {
+    const model = this.client.getGenerativeModel({
+      model: "gemini-2.5-flash-lite",
+      tools: input.tools
+        ? [{ functionDeclarations: this.mapTools(input.tools) }]
+        : undefined
+    })
+
+    const result = await model.generateContentStream({
+      contents: this.mapMessages(input.messages)
+    })
+
+    let fullText = ""
+
+    for await (const chunk of result.stream) {
+      const text = chunk.text()
+
+      if (!text) continue
+
+      fullText += text
+      input.onChunk(text)
+    }
+
+    return {
+      finishReason: "stop",
+      text: fullText
+    }
+  }
 }
 

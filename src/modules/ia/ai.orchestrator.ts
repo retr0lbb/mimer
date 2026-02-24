@@ -42,12 +42,46 @@ export class AIOrchestrator{
     }
 
     async runStream(input: {
-        tenantId: string,
-        providerName: string,
-        messages: AIMessage[],
-        tools?: AITool[]
-        onChunk: (chunk: any) => void
-    }){
-        throw new Error("Not Implemented Yet")
+  tenantId: string
+  providerName: string
+  messages: AIMessage[]
+  tools?: AITool[]
+  onChunk: (chunk: string) => void
+}) {
+  const provider = this.providerFactory.create(input.providerName)
+
+  if (!provider.generateStream) {
+    throw new Error("Stream not supported by provider")
+  }
+
+  const context = [...input.messages]
+
+  if (input.tools && input.tools.length > 0) {
+    const result = await this.run({
+      tenantId: input.tenantId,
+      providerName: input.providerName,
+      messages: context,
+      tools: input.tools
+    })
+
+    if (result.type === "final" && result.content) {
+      input.onChunk(result.content)
     }
+
+    return result
+  }
+
+  const response = await provider.generateStream({
+    messages: context,
+    tools: input.tools,
+    onChunk: (chunk) => {
+      input.onChunk(chunk)
+    }
+  })
+
+  return {
+    type: "final",
+    content: response.text
+  }
+}
 }

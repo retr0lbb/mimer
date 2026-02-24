@@ -10,6 +10,6 @@ export class OpenAIProvider implements AIProvider{
     }
 
     async generate(input: { messages: AIMessage[]; tools?: AITool[]; stream?: boolean; }): Promise<AIProviderResponse> {
-        return {finishReason: "stop", text: "Ola eu sou uma interpretação de OPENAI CHATGPT"}
+        throw new Error("NOT Implemented")
     }
 }
