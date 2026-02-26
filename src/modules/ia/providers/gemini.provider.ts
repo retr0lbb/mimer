@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { AIMessage, AITool, AIProviderResponse } from "../ai.types.ts";
 import type { AIProvider } from "./ai.provider.interface.ts";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export class GeminiProvider implements AIProvider {
 	private client: GoogleGenerativeAI;
@@ -11,10 +11,26 @@ export class GeminiProvider implements AIProvider {
 	}
 
 	private mapMessages(messages: AIMessage[]) {
-		return messages.map((m) => ({
-			role: m.role === "assistant" ? "model" : m.role,
-			parts: [{ text: m.content }],
-		}));
+		return messages.map((m: any) => {
+			if (m.role === "tool") {
+				return {
+					role: "function",
+					parts: [
+						{
+							functionResponse: {
+								name: m.name,
+								response: JSON.parse(m.content),
+							},
+						},
+					],
+				};
+			}
+
+			return {
+				role: m.role === "assistant" ? "model" : m.role,
+				parts: [{ text: m.content }],
+			};
+		});
 	}
 
 	private mapTools(tools?: AITool[]) {
@@ -32,6 +48,7 @@ export class GeminiProvider implements AIProvider {
 		tools?: AITool[];
 		stream?: boolean;
 	}): Promise<AIProviderResponse> {
+		console.log(input.tools);
 		const model = this.client.getGenerativeModel({
 			model: "gemini-2.5-flash-lite",
 			tools: input.tools
@@ -50,15 +67,17 @@ export class GeminiProvider implements AIProvider {
 			throw new Error("No response from gemini");
 		}
 
-		const parts = candidate.content.parts?.[0];
+		const functionPart = candidate.content.parts?.find(
+			(p: any) => p.functionCall,
+		);
 
-		if (parts?.functionCall) {
+		if (functionPart?.functionCall) {
 			return {
 				finishReason: "tool_call",
 				toolCall: {
 					id: randomUUID(),
-					name: parts.functionCall.name,
-					arguments: parts.functionCall.args,
+					name: functionPart.functionCall.name,
+					arguments: functionPart.functionCall.args,
 				},
 			};
 		}

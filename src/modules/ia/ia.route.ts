@@ -11,7 +11,11 @@ export async function aiRoutes(app: FastifyInstance) {
 	const aiProviderFactory = new ProviderFactory();
 	const toolRegistry = new ToolRegistry("not implemented");
 	const toolExecutor = new ToolExecutor(toolRegistry);
-	const aiOrchestrator = new AIOrchestrator(aiProviderFactory, toolExecutor);
+	const aiOrchestrator = new AIOrchestrator(
+		aiProviderFactory,
+		toolExecutor,
+		toolRegistry,
+	);
 	const service = new AIService(aiOrchestrator);
 	const controller = new AIController(service);
 

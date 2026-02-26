@@ -1,8 +1,13 @@
-export interface AIMessage {
-	role: "system" | "user" | "assistant" | "tool";
-	content: string;
-	tool_call_id?: string;
-}
+export type AIMessage =
+	| {
+			role: "user" | "assistant" | "system";
+			content: string;
+	  }
+	| {
+			role: "tool";
+			content: string;
+			name: string;
+	  };
 
 export interface AITool {
 	name: string;

@@ -1,5 +1,5 @@
-import { ToolRegistry } from "./tool.registry.ts";
 import { internalHandlers } from "./handlers/internal.handler.ts";
+import type { ToolRegistry } from "./tool.registry.ts";
 
 export class ToolExecutor {
 	constructor(private toolRegistry: ToolRegistry) {}

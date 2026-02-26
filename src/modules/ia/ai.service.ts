@@ -16,7 +16,6 @@ export class AIService {
 		const result = await this.aiOrchestrator.run({
 			tenantId: tenant.id,
 			providerName: "gemini",
-			tools: [],
 			messages: [{ role: "user", content: message }],
 		});
 

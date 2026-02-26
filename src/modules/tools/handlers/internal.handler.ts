@@ -17,20 +17,20 @@ export const internalHandlers: Record<
 		};
 	},
 
-	async searchBills(args) {
-		const { name, cpf } = args;
+	async buscar_boleto(args) {
+		const { nome, cpf } = args;
 
-		if (!name || !cpf) {
+		if (!nome || !cpf) {
 			return { error: "CPF and Name are required" };
 		}
 
-		const filepath = path.resolve("scr/data/boletos.json");
+		const filepath = path.resolve("src/data/boletos.json");
 
 		const raw = await fs.readFile(filepath, "utf-8");
 		const boletos = JSON.parse(raw);
 
 		const boleto = boletos.find(
-			(b: any) => b.nome.toLowerCase() === name.toLowerCase() && b.cpf === cpf,
+			(b: any) => b.nome.toLowerCase() === nome.toLowerCase() && b.cpf === cpf,
 		);
 
 		if (!boleto) {

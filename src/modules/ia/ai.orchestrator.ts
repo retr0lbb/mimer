@@ -1,4 +1,6 @@
+import { Schema } from "zod";
 import type { ToolExecutor } from "../tools/tool.executor.ts";
+import { ToolRegistry } from "../tools/tool.registry.ts";
 import type { AIMessage, AITool } from "./ai.types.ts";
 import type { ProviderFactory } from "./providers/ai.provider.factory.ts";
 
@@ -6,6 +8,7 @@ export class AIOrchestrator {
 	constructor(
 		private providerFactory: ProviderFactory,
 		private toolExecutor: ToolExecutor,
+		private toolRegistry: ToolRegistry,
 	) {}
 
 	async run(input: {
@@ -18,12 +21,22 @@ export class AIOrchestrator {
 
 		const context = [...input.messages];
 
+		const registeredTools = await this.toolRegistry.getToolsForTenant(
+			input.tenantId,
+		);
+
+		const aiTools = registeredTools.map((tool) => ({
+			name: tool.name,
+			description: tool.description,
+			schema: tool.schema,
+		}));
+
 		let iterations = 0;
 
 		while (iterations < 5) {
 			const response = await provider.generate({
 				messages: context,
-				tools: input.tools,
+				tools: aiTools.length ? aiTools : undefined,
 			});
 
 			console.log(response);
@@ -37,8 +50,8 @@ export class AIOrchestrator {
 
 				context.push({
 					role: "tool",
+					name: response.toolCall.name,
 					content: JSON.stringify(result),
-					tool_call_id: response.toolCall.id,
 				});
 
 				iterations++;
