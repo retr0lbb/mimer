@@ -1,8 +1,12 @@
+import type { ToolExecutor } from "../tools/tool.executor.ts";
 import type { AIMessage, AITool } from "./ai.types.ts";
 import type { ProviderFactory } from "./providers/ai.provider.factory.ts";
 
 export class AIOrchestrator {
-	constructor(private providerFactory: ProviderFactory) {}
+	constructor(
+		private providerFactory: ProviderFactory,
+		private toolExecutor: ToolExecutor,
+	) {}
 
 	async run(input: {
 		tenantId: string;
@@ -22,8 +26,23 @@ export class AIOrchestrator {
 				tools: input.tools,
 			});
 
+			console.log(response);
+
 			if (response.toolCall) {
-				throw new Error("Not Implemented");
+				const result = await this.toolExecutor.execute({
+					tenantId: input.tenantId,
+					toolName: response.toolCall.name,
+					args: response.toolCall.arguments,
+				});
+
+				context.push({
+					role: "tool",
+					content: JSON.stringify(result),
+					tool_call_id: response.toolCall.id,
+				});
+
+				iterations++;
+				continue;
 			}
 
 			return {

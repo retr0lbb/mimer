@@ -1,8 +1,9 @@
-enum TOOL_NAME{
-    HANDOFF = "handoff",
-    GET_BOLETO = "get:boleto"
-}
-
-export interface Tools{
-    name: TOOL_NAME
+export interface ToolDefinition {
+	id: string;
+	tenantId: string;
+	name: string;
+	description: string;
+	schema: any;
+	handlerType: "internal" | "http";
+	config?: any;
 }
