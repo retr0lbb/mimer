@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { AIController } from "./ai.controller.ts";
 import { AIService } from "./ai.service.ts";
-import { findTenantPlugin } from "../../middlewears/find-tenant.ts";
+import { findTenantPlugin } from "../../middlewares/find-tenant.ts";
 import { AIOrchestrator } from "./ai.orchestrator.ts";
 import { ProviderFactory } from "./providers/ai.provider.factory.ts";
 import { ToolExecutor } from "../tools/tool.executor.ts";

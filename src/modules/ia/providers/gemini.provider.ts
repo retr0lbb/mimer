@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { AIMessage, AITool, AIProviderResponse } from "../ai.types.ts";
 import type { AIProvider } from "./ai.provider.interface.ts";
+import { logger } from "../../../utils/logger.ts";
 
 export class GeminiProvider implements AIProvider {
 	private readonly client: GoogleGenerativeAI;
@@ -50,7 +51,7 @@ export class GeminiProvider implements AIProvider {
 		tools?: AITool[];
 		stream?: boolean;
 	}): Promise<AIProviderResponse> {
-		console.log(input.tools);
+		logger.debug({ tools: input.tools }, "provider: gemini tools");
 		const model = this.client.getGenerativeModel({
 			model: "gemini-2.5-flash-lite",
 			tools: input.tools

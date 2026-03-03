@@ -2,6 +2,7 @@ import type { ToolExecutor } from "../tools/tool.executor.ts";
 import { ToolRegistry } from "../tools/tool.registry.ts";
 import type { AIMessage, AITool } from "./ai.types.ts";
 import type { ProviderFactory } from "./providers/ai.provider.factory.ts";
+import { logger } from "../../utils/logger.ts";
 
 export class AIOrchestrator {
 	constructor(
@@ -38,7 +39,7 @@ export class AIOrchestrator {
 				tools: aiTools.length ? aiTools : undefined,
 			});
 
-			console.log(response);
+			logger.debug({ response }, "provider response");
 
 			if (response.toolCall) {
 				const result = await this.toolExecutor.execute({

@@ -1,6 +1,7 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { AIOrchestrator } from "./ai.orchestrator.ts";
 import { NotFoundError } from "../../_errors/errors.ts";
+import { logger } from "../../utils/logger.ts";
 
 export class AIService {
 	constructor(private aiOrchestrator: AIOrchestrator) {}
@@ -8,7 +9,7 @@ export class AIService {
 	async chat(request: FastifyRequest, message: string) {
 		const tenant = request.tenant;
 
-		console.log(tenant);
+		logger.debug({ tenant }, "tenant from request");
 
 		if (!tenant) {
 			throw new NotFoundError("Tenant not found");
@@ -50,7 +51,7 @@ export class AIService {
 			reply.raw.write("event: end\ndata: done\n\n");
 			reply.raw.end();
 		} catch (err) {
-			console.error(err);
+			logger.error({ err }, "streaming error");
 			reply.raw.end();
 		}
 	}
