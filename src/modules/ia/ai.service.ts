@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { AIOrchestrator } from "./ai.orchestrator.ts";
+import { NotFoundError } from "../../_errors/errors.ts";
 
 export class AIService {
 	constructor(private aiOrchestrator: AIOrchestrator) {}
@@ -10,7 +11,7 @@ export class AIService {
 		console.log(tenant);
 
 		if (!tenant) {
-			throw new Error("Tenant not found");
+			throw new NotFoundError("Tenant not found");
 		}
 
 		const result = await this.aiOrchestrator.run({
@@ -26,7 +27,7 @@ export class AIService {
 		const tenant = request.tenant;
 
 		if (!tenant) {
-			throw new Error("Tenant not found");
+			throw new NotFoundError("Tenant not found");
 		}
 
 		reply.hijack();

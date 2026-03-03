@@ -4,7 +4,7 @@ import type { AIMessage, AITool, AIProviderResponse } from "../ai.types.ts";
 import type { AIProvider } from "./ai.provider.interface.ts";
 
 export class GeminiProvider implements AIProvider {
-	private client: GoogleGenerativeAI;
+	private readonly client: GoogleGenerativeAI;
 
 	constructor(googleApiKey: string) {
 		this.client = new GoogleGenerativeAI(googleApiKey);
@@ -34,7 +34,9 @@ export class GeminiProvider implements AIProvider {
 	}
 
 	private mapTools(tools?: AITool[]) {
-		if (!tools || tools.length === 0) return undefined;
+		if (!tools || tools.length === 0) {
+			return undefined;
+		}
 
 		return tools.map((tool) => ({
 			name: tool.name,

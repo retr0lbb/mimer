@@ -1,4 +1,3 @@
-import { Schema } from "zod";
 import type { ToolExecutor } from "../tools/tool.executor.ts";
 import { ToolRegistry } from "../tools/tool.registry.ts";
 import type { AIMessage, AITool } from "./ai.types.ts";

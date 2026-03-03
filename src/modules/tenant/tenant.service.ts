@@ -7,17 +7,12 @@ export class TenantService{
         this.tenantRepository = tenantRepository
     }
 
-    async create(body: Omit<CreateTenantDTO, "apiKey">){
-        const apiKey = randomUUID()
+    async create(body: Omit<CreateTenantDTO, "apiKey">) {
+        const apiKey = randomUUID();
 
-        try {
-            await this.tenantRepository.create({...body, apiKey})
-            return {
-                ok: true
-            }
-        } catch (error) {
-            console.log(error)
-            throw error
-        }
+        await this.tenantRepository.create({ ...body, apiKey });
+        return {
+            ok: true,
+        };
     }
 }
