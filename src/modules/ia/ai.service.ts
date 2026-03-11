@@ -2,23 +2,21 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import type { AIOrchestrator } from "./ai.orchestrator.ts";
 import { NotFoundError } from "../../_errors/errors.ts";
 import { logger } from "../../utils/logger.ts";
+import { AIMessage } from "./ai.types.ts";
+
+interface AIServiceChat {
+	tenantId: string;
+	history: AIMessage[];
+}
 
 export class AIService {
 	constructor(private aiOrchestrator: AIOrchestrator) {}
 
-	async chat(request: FastifyRequest, message: string) {
-		const tenant = request.tenant;
-
-		logger.debug({ tenant }, "tenant from request");
-
-		if (!tenant) {
-			throw new NotFoundError("Tenant not found");
-		}
-
+	async chat(input: AIServiceChat) {
 		const result = await this.aiOrchestrator.run({
-			tenantId: tenant.id,
+			tenantId: input.tenantId,
 			providerName: "gemini",
-			messages: [{ role: "user", content: message }],
+			messages: input.history,
 		});
 
 		return result;

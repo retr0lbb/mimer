@@ -1,14 +1,14 @@
 import type { ToolExecutor } from "../tools/tool.executor.ts";
-import { ToolRegistry } from "../tools/tool.registry.ts";
+import type { ToolRegistry } from "../tools/tool.registry.ts";
 import type { AIMessage, AITool } from "./ai.types.ts";
 import type { ProviderFactory } from "./providers/ai.provider.factory.ts";
 import { logger } from "../../utils/logger.ts";
 
 export class AIOrchestrator {
 	constructor(
-		private providerFactory: ProviderFactory,
-		private toolExecutor: ToolExecutor,
-		private toolRegistry: ToolRegistry,
+		private readonly providerFactory: ProviderFactory,
+		private readonly toolExecutor: ToolExecutor,
+		private readonly toolRegistry: ToolRegistry,
 	) {}
 
 	async run(input: {
@@ -57,6 +57,8 @@ export class AIOrchestrator {
 				iterations++;
 				continue;
 			}
+
+			console.log(response);
 
 			return {
 				type: "final",

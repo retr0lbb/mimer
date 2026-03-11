@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { AIMessage, AITool, AIProviderResponse } from "../ai.types.ts";
 import type { AIProvider } from "./ai.provider.interface.ts";
 import { logger } from "../../../utils/logger.ts";
+import { BadRequestError } from "../../../_errors/errors.ts";
 
 export class GeminiProvider implements AIProvider {
 	private readonly client: GoogleGenerativeAI;
@@ -83,6 +84,10 @@ export class GeminiProvider implements AIProvider {
 					arguments: functionPart.functionCall.args,
 				},
 			};
+		}
+
+		if (response.text() === "") {
+			throw new BadRequestError("AI couldn't generate a valid response.");
 		}
 
 		return {

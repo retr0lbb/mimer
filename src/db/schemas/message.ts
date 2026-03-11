@@ -1,15 +1,19 @@
-import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { conversations } from "./conversation.ts";
 
 export const messages = pgTable("messages", {
-  id: uuid("id").defaultRandom().primaryKey(),
+	id: uuid("id").defaultRandom().primaryKey(),
 
-  conversationId: uuid("conversation_id")
-    .references(() => conversations.id)
-    .notNull(),
+	conversationId: uuid("conversation_id")
+		.references(() => conversations.id)
+		.notNull(),
 
-  role: text("role").notNull(), // user | assistant | tool
-  content: text("content").notNull(),
+	role: text("role").notNull(),
+	content: text("content").notNull(),
 
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+	toolName: text("tool_name"),
+
+	metadata: jsonb("metadata"),
+
+	createdAt: timestamp("created_at").defaultNow().notNull(),
 });

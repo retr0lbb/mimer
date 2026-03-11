@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { logger } from "../../../utils/logger.ts";
 
 export const internalHandlers: Record<
 	string,
@@ -36,6 +37,8 @@ export const internalHandlers: Record<
 		if (!boleto) {
 			return { error: "Boleto nao encontrado" };
 		}
+
+		logger.debug({ boleto }, "response from provider");
 
 		return boleto;
 	},
