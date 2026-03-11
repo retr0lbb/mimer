@@ -13,14 +13,14 @@ export async function findTenantPlugin(
 		throw new UnauthorizedError("Missing tenant id");
 	}
 
-	const result = await db
+	const [result] = await db
 		.select()
 		.from(tenants)
 		.where(eq(tenants.apiKey, tenantId));
 
-	if (!result || result.length !== 1) {
+	if (!result) {
 		throw new NotFoundError("Tenant not found");
 	}
 
-	request.tenant = result[0];
+	request.tenant = result;
 }
