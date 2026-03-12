@@ -19,8 +19,9 @@ Yes i use readme.md to organize my tasks so i don't get messed up
         - 2.2.4 CREATE REPOSITORY STRATEGY [✅] 
     - 2.3 Create Routes
         - 2.3.1 Create Tenant Crud [✅]
-        - 2.3.2 Create Tenant Middleware <----- CURRENT
-        - 2.3.3 Create Ia Orchestrator
-        - 2.3.4 Create Ia Factory
-- 3. CONNECT IA.
-- 4. CONNECT APP MESSAGING SYSTEM.
+        - 2.3.2 Create Tenant Middleware [✅]
+        - 2.3.3 Create Ia Orchestrator [✅]
+        - 2.3.4 Create Ia Factory [✅]
+- 3. CONNECT IA. [✅]
+- 4. CONNECT APP MESSAGING SYSTEM. <---- Current
+

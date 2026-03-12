@@ -1,6 +1,6 @@
 import z4 from "zod/v4";
-import { ConversationService } from "./conversation.service.ts";
-import { FastifyReply, FastifyRequest } from "fastify";
+import type { ConversationService } from "./conversation.service.ts";
+import type { FastifyReply, FastifyRequest } from "fastify";
 
 const messageSchema = z4.object({
 	text: z4.string(),

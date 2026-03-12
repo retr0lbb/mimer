@@ -16,7 +16,7 @@ export class ConversationService {
 	}) {
 		const foundConversation = await this.findConversation({
 			tenantId: message.tenantId,
-			userIdentifier: message.tenantId,
+			userIdentifier: message.userIdentifier,
 		});
 
 		if (foundConversation === false) {
