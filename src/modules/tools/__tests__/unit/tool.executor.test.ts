@@ -54,7 +54,7 @@ describe("ToolExecutor", () => {
 		// fix this test later
 
 		describe("should throw when internal handler not implemented", () => {
-			it("when handlerType is internal but no handler exists", async () => {
+			it("when handlerType is internal but tool name is not in InternalToolName enum", async () => {
 				const tool: ToolDefinition = {
 					id: "1",
 					tenantId: "test-tenant",
@@ -66,7 +66,23 @@ describe("ToolExecutor", () => {
 				mockToolRegistry.getToolByName.mockResolvedValue(tool);
 
 				await expect(toolExecutor.execute(baseInput)).rejects.toThrow(
-					"Internal Handler not implemented yet",
+					"Internal tool test_tool does not exist",
+				);
+			});
+
+			it("when handlerType is internal but tool name does not exist", async () => {
+				const tool: ToolDefinition = {
+					id: "1",
+					tenantId: "test-tenant",
+					name: "nonexistent_tool",
+					description: "nonexistent tool",
+					schema: {},
+					handlerType: "internal",
+				};
+				mockToolRegistry.getToolByName.mockResolvedValue(tool);
+
+				await expect(toolExecutor.execute(baseInput)).rejects.toThrow(
+					"Internal tool nonexistent_tool does not exist",
 				);
 			});
 		});

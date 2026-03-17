@@ -1,4 +1,5 @@
-import { internalHandlers } from "./handlers/internal.handler.ts";
+import { internalHandlers, INTERNAL_TOOL_NAMES } from "./handlers/internal.handler.ts";
+import { InternalToolName } from "./types/internal-tool.type.ts";
 import type { ToolRegistry } from "./tool.registry.ts";
 
 export class ToolExecutor {
@@ -27,7 +28,11 @@ export class ToolExecutor {
 	}
 
 	private async executeInternal(tool: any, args: any) {
-		const handler = internalHandlers[tool.name];
+		if (!INTERNAL_TOOL_NAMES.includes(tool.name)) {
+			throw new Error(`Internal tool ${tool.name} does not exist`);
+		}
+
+		const handler = internalHandlers[tool.name as InternalToolName];
 
 		if (!handler) {
 			throw new Error("Internal Handler not implemented yet");
