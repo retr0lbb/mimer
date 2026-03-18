@@ -54,7 +54,7 @@ export class GeminiProvider implements AIProvider {
 	}): Promise<AIProviderResponse> {
 		logger.debug({ tools: input.tools }, "provider: gemini tools");
 		const model = this.client.getGenerativeModel({
-			model: "gemini-2.5-flash-lite",
+			model: "gemini-3-flash-preview",
 			tools: input.tools
 				? [{ functionDeclarations: this.mapTools(input.tools) }]
 				: undefined,

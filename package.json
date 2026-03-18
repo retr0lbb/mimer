@@ -6,7 +6,8 @@
 	"scripts": {
 		"node:dev": "node --experimental-strip-types --experimental-specifier-resolution=node --env-file=.env --watch src/server.ts",
 		"dev": "tsx --env-file=.env src/server.ts",
-		"test": "jest"
+		"test": "jest",
+		"db:studio": "drizzle-kit studio"
 	},
 	"repository": {
 		"type": "git",
@@ -39,8 +40,9 @@
 		"fastify-plugin": "^5.1.0",
 		"openai": "^6.22.0",
 		"pg": "^8.18.0",
-		"zod": "^4.3.6",
 		"pino": "^8.20.0",
-		"pino-pretty": "^10.0.0"
+		"pino-pretty": "^10.0.0",
+		"pino-roll": "^3.1.0",
+		"zod": "^4.3.6"
 	}
 }
