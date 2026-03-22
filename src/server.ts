@@ -2,7 +2,7 @@ import fastify from "fastify";
 import { tenantRoutes } from "./modules/tenant/tenant.route.ts";
 import { aiRoutes } from "./modules/ia/ia.route.ts";
 import { errorHandler } from "./_errors/handlers.ts";
-import { logger, logToFile } from "./utils/logger.ts";
+import { logToFile } from "./utils/logger.ts";
 import { conversationRoutes } from "./modules/conversation/conversation.route.ts";
 
 const app = fastify();
@@ -43,5 +43,5 @@ app
 		port: 3333,
 	})
 	.then((_) => {
-		logger.info({ port: 3333 }, "HTTP server running");
+		console.log("HTTP SERVER RUNNING on 3333");
 	});

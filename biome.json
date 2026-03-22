@@ -17,7 +17,11 @@
 		"rules": {
 			"recommended": true,
 			"performance": "on",
-			"style": "info"
+			"style": {
+				"noParameterProperties": "off"
+			},
+			"complexity": {},
+			"correctness": {}
 		}
 	},
 	"javascript": {

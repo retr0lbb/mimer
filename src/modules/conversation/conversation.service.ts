@@ -8,6 +8,26 @@ import type { AIMessage } from "../ia/ai.types.ts";
 export class ConversationService {
 	constructor(private readonly aiService: AIService) {}
 
+	parseMessagesIntoAIMessage(
+		messages: {
+			id: string;
+			createdAt: Date;
+			metadata: unknown;
+			conversationId: string;
+			role: string;
+			content: string;
+			toolName: string | null;
+		}[],
+	): AIMessage[] {
+		const mappedArr: AIMessage[] = messages.map((message) => ({
+			content: message.content,
+			name: message.toolName,
+			role: message.role as any,
+		}));
+
+		return mappedArr;
+	}
+
 	async handleMessageIncoming(message: {
 		text: string;
 		tenantId: string;
@@ -20,6 +40,7 @@ export class ConversationService {
 		});
 
 		if (foundConversation === false) {
+			console.log("NO CONVERSATION FOUND");
 			const newConversation = await this.createConversation({
 				channel: message.channel,
 				tenantId: message.tenantId,
@@ -41,6 +62,8 @@ export class ConversationService {
 				tenantId: message.tenantId,
 			});
 
+			console.log("SAVING MESSAGE ON A NEW CONVERSATION");
+
 			await db.insert(messages).values({
 				content: aiMessage.content ?? "",
 				conversationId: newConversation.id,
@@ -52,28 +75,26 @@ export class ConversationService {
 
 		let aiMessage: { content: string | undefined };
 		await db.transaction(async (tx) => {
-			tx.insert(messages).values({
+			console.log("INIT OF TRANSACTION");
+			await tx.insert(messages).values({
 				content: message.text,
 				conversationId: foundConversation.id,
 				role: "user",
 			});
 
-			const mappedMessages: AIMessage[] = foundConversation.messages.map(
-				(m) => ({
-					role: m.role as "user" | "assistant" | "system",
-					content: m.content,
-				}),
-			) as AIMessage[];
+			const messagesFromDb = await tx.query.messages.findMany({
+				where: eq(messages.conversationId, foundConversation.id),
+			});
+
+			const mappedMessages = this.parseMessagesIntoAIMessage(messagesFromDb);
 
 			aiMessage = await this.aiService.chat({
-				history: [
-					...mappedMessages,
-					{ role: "user", content: message.text } as AIMessage,
-				],
+				history: [...mappedMessages],
 				tenantId: message.tenantId,
 			});
 
-			tx.insert(messages).values({
+			console.log("SAVING MESSAGE ON EXISTING CONVERSATION");
+			await tx.insert(messages).values({
 				content: aiMessage.content ?? "",
 				conversationId: foundConversation.id,
 				role: "assistant",

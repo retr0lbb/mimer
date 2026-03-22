@@ -1,4 +1,12 @@
 import { env } from "../config/env.ts"
 import { drizzle } from "drizzle-orm/node-postgres"
 
-export const db = drizzle(env.DATABASE_URL!)
+import { conversations } from "./schemas/conversation.ts";
+import { messages } from "./schemas/message.ts";
+
+export const db = drizzle(env.DATABASE_URL!, {
+    schema: {
+        conversations,
+        messages,
+    },
+});

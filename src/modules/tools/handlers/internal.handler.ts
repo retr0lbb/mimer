@@ -1,7 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { z } from "zod";
-import { logger } from "../../../utils/logger.ts";
+import type { z } from "zod";
 import {
 	InternalToolName,
 	InternalToolSchemas,
@@ -79,8 +78,6 @@ export const internalTools = {
 			if (!boleto) {
 				return { error: "Boleto nao encontrado" };
 			}
-
-			logger.debug({ boleto }, "response from provider");
 
 			return {
 				nome: boleto.nome,

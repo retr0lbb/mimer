@@ -1,8 +1,8 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import type { AIOrchestrator } from "./ai.orchestrator.ts";
 import { NotFoundError } from "../../_errors/errors.ts";
-import { logger } from "../../utils/logger.ts";
-import { AIMessage } from "./ai.types.ts";
+import type { AIMessage } from "./ai.types.ts";
+import { error } from "node:console";
 
 interface AIServiceChat {
 	tenantId: string;
@@ -49,7 +49,7 @@ export class AIService {
 			reply.raw.write("event: end\ndata: done\n\n");
 			reply.raw.end();
 		} catch (err) {
-			logger.error({ err }, "streaming error");
+			console.log(err);
 			reply.raw.end();
 		}
 	}
