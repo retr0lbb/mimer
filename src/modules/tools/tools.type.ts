@@ -1,9 +1,3 @@
-export interface ToolDefinition {
-	id: string;
-	tenantId: string;
-	name: string;
-	description: string;
-	schema: any;
-	handlerType: "internal" | "http";
-	config?: any;
-}
+import type { tools } from "../../db/schemas/tools.ts";
+
+export type ToolDefinition = typeof tools.$inferInsert;
