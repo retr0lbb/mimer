@@ -6,7 +6,11 @@ import z from "zod";
 export class ToolController {
 	constructor(private readonly toolService: ToolService) {}
 	create = async (req: FastifyRequest, res: FastifyReply) => {
-		const tenantId = req.tenant.id;
+		const paramsSchema = z.object({
+			id: z.uuid(),
+		});
+
+		const { id } = paramsSchema.parse(req.params);
 
 		const { description, handlerType, name, schema, config } =
 			createToolSchema.parse(req.body);
@@ -16,7 +20,7 @@ export class ToolController {
 			handlerType,
 			name,
 			schema,
-			tenantId,
+			tenantId: id,
 			config,
 		});
 

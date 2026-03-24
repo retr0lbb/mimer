@@ -9,7 +9,7 @@ export async function toolRoutes(app: FastifyInstance) {
 	const service = new ToolService(repository);
 	const controller = new ToolController(service);
 
-	app.post("/tool", { preHandler: [findTenantPlugin] }, controller.create);
+	app.post("/tenants/:id/tools", controller.create);
 
 	app.get("/tenants/:id/tools", controller.listByTenant);
 }

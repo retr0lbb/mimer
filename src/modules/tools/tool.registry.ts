@@ -14,24 +14,12 @@ export class ToolRegistry {
 	}
 
 	async getToolsForTenant(tenantId: string): Promise<ToolDefinition[]> {
-		// return this.toolRepository.findByTenant(tenantId); // for later with DB
+		const tenantTools = await this.toolRepository.getToolByTenant(tenantId);
 
-		return [
-			{
-				id: "1",
-				tenantId,
-				name: "buscar_boleto",
-				description: "busca um boleto em json pelo nome e cpf de uma pessoa",
-				schema: {
-					type: "object",
-					properties: {
-						nome: { type: "string" },
-						cpf: { type: "string" },
-					},
-					required: ["nome", "cpf"],
-				},
-				handlerType: "internal",
-			},
-		];
+		if (!tenantTools) {
+			throw new Error("Tools not found");
+		}
+
+		return tenantTools;
 	}
 }

@@ -1,5 +1,5 @@
-import { FastifyRequest } from "fastify";
-import { MessageProviderFactory } from "./providers/providerFactory.ts";
+import type { FastifyRequest } from "fastify";
+import type { MessageProviderFactory } from "./providers/providerFactory.ts";
 
 export class MessageGateway {
 	constructor(private readonly providerFactory: MessageProviderFactory) {}

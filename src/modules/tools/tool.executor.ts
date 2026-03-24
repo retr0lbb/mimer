@@ -1,11 +1,15 @@
-import { internalHandlers, INTERNAL_TOOL_NAMES } from "./handlers/internal.handler.ts";
-import { InternalToolName } from "./types/internal-tool.type.ts";
+import {
+	internalHandlers,
+	INTERNAL_TOOL_NAMES,
+} from "./handlers/internal.handler.ts";
+import type { InternalToolName } from "./types/internal-tool.type.ts";
 import type { ToolRegistry } from "./tool.registry.ts";
+import type { ToolDefinition } from "./tools.type.ts";
 
 export class ToolExecutor {
 	constructor(private toolRegistry: ToolRegistry) {}
 
-	async execute(input: { tenantId: string; toolName: string; args: any }) {
+	async execute(input: { tenantId: string; toolName: string; args: unknown }) {
 		const tool = await this.toolRegistry.getToolByName(
 			input.tenantId,
 			input.toolName,
@@ -27,7 +31,7 @@ export class ToolExecutor {
 		}
 	}
 
-	private async executeInternal(tool: any, args: any) {
+	private async executeInternal(tool: ToolDefinition, args: unknown) {
 		if (!INTERNAL_TOOL_NAMES.includes(tool.name)) {
 			throw new Error(`Internal tool ${tool.name} does not exist`);
 		}
@@ -42,19 +46,6 @@ export class ToolExecutor {
 	}
 
 	private async executeHttp(tool: any, args: any) {
-		const response = await fetch(tool.config.url, {
-			method: tool.config.method || "POST",
-			headers: {
-				"Content-Type": "application/json",
-				...(tool.config.headers || {}),
-			},
-			body: JSON.stringify(args),
-		});
-
-		if (!response.ok) {
-			throw new Error("HTTP call failed");
-		}
-
-		return await response.json();
+		throw new Error("Not Implemented");
 	}
 }

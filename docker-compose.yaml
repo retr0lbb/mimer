@@ -16,8 +16,23 @@ services:
     networks:
       - mimer-network
 
+  waha:
+    image: devlikeapro/waha:latest
+    container_name: mimer-waha
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - WAHA_WORKER_ID=waha
+      - WAHA_PRINT_QR=False
+    volumes:
+      - waha_sessions:/app/.sessions
+    networks:
+      - mimer-network
+
 volumes:
   postgres_data:
+  waha_sessions:
 
 networks:
   mimer-network:

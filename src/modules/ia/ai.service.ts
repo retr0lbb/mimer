@@ -2,7 +2,6 @@ import type { FastifyReply, FastifyRequest } from "fastify";
 import type { AIOrchestrator } from "./ai.orchestrator.ts";
 import { NotFoundError } from "../../_errors/errors.ts";
 import type { AIMessage } from "./ai.types.ts";
-import { error } from "node:console";
 
 interface AIServiceChat {
 	tenantId: string;

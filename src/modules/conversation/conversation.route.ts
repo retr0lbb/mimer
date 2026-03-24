@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import type { FastifyInstance } from "fastify";
 import { ConversationController } from "./conversation.controller.ts";
 import { ConversationService } from "./conversation.service.ts";
 import { AIService } from "../ia/ai.service.ts";
@@ -7,10 +7,12 @@ import { ProviderFactory } from "../ia/providers/ai.provider.factory.ts";
 import { ToolExecutor } from "../tools/tool.executor.ts";
 import { ToolRegistry } from "../tools/tool.registry.ts";
 import { findTenantPlugin } from "../../middlewares/find-tenant.ts";
+import { ToolRepository } from "../tools/tool.repository.ts";
 
 export async function conversationRoutes(app: FastifyInstance) {
 	const providerFactory = new ProviderFactory();
-	const toolRegistry = new ToolRegistry("not implemented");
+	const toolRepository = new ToolRepository();
+	const toolRegistry = new ToolRegistry(toolRepository);
 	const toolExecutor = new ToolExecutor(toolRegistry);
 	const iaOrchestrator = new AIOrchestrator(
 		providerFactory,
