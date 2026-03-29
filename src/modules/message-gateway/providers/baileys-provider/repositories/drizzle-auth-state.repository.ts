@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { BufferJSON } from "baileys";
 import { db } from "../../../../../db/index.ts";
 import { credentials } from "@src/db/schemas/credentials.ts";
 import type {
@@ -6,39 +7,63 @@ import type {
 	PersistedAuthState,
 } from "../types/auth-state.repository.ts";
 
-function isBufferLike(value: unknown): value is { type: "Buffer"; data: number[] } {
+const BINARY_FIELDS = new Set([
+	"public",
+	"private",
+	"signature",
+	"identifierKey",
+	"ephemeral",
+]);
+
+function isBufferLikeObject(
+	value: unknown,
+): value is { type: "Buffer"; data: number[] | string } {
 	return (
 		typeof value === "object" &&
 		value !== null &&
 		"type" in value &&
 		(value as Record<string, unknown>).type === "Buffer" &&
-		"data" in value &&
-		Array.isArray((value as Record<string, unknown>).data)
+		"data" in value
 	);
 }
 
-function restoreBuffers<T>(obj: T): T {
+function restoreBuffers<T>(obj: T, fieldName?: string): T {
 	if (obj === null || obj === undefined) {
 		return obj;
 	}
 
-	if (isBufferLike(obj)) {
-		return Buffer.from(obj.data) as unknown as T;
+	if (isBufferLikeObject(obj)) {
+		const data = obj.data;
+		if (typeof data === "string") {
+			return Buffer.from(data, "base64") as unknown as T;
+		}
+		return Buffer.from(data) as unknown as T;
+	}
+
+	if (typeof obj === "string" && fieldName && BINARY_FIELDS.has(fieldName)) {
+		return Buffer.from(obj, "base64") as unknown as T;
 	}
 
 	if (Array.isArray(obj)) {
-		return obj.map(restoreBuffers) as unknown as T;
+		return obj.map((item) => restoreBuffers(item)) as unknown as T;
 	}
 
 	if (typeof obj === "object") {
 		const restored: Record<string, unknown> = {};
 		for (const key of Object.keys(obj)) {
-			restored[key] = restoreBuffers((obj as Record<string, unknown>)[key]);
+			restored[key] = restoreBuffers(
+				(obj as Record<string, unknown>)[key],
+				key,
+			);
 		}
 		return restored as T;
 	}
 
 	return obj;
+}
+
+function normalizeForStorage(obj: unknown): unknown {
+	return JSON.parse(JSON.stringify(obj, BufferJSON.replacer));
 }
 
 export class DrizzleAuthStateRepository implements AuthStateRepository {
@@ -62,15 +87,18 @@ export class DrizzleAuthStateRepository implements AuthStateRepository {
 	async create(tenantId: string, state: PersistedAuthState): Promise<void> {
 		await db.insert(credentials).values({
 			tenantId,
-			creds: state.creds,
-			keys: state.keys,
+			creds: normalizeForStorage(state.creds),
+			keys: normalizeForStorage(state.keys),
 		});
 	}
 
 	async update(tenantId: string, state: PersistedAuthState): Promise<void> {
 		await db
 			.update(credentials)
-			.set({ creds: state.creds, keys: state.keys })
+			.set({
+				creds: normalizeForStorage(state.creds),
+				keys: normalizeForStorage(state.keys),
+			})
 			.where(eq(credentials.tenantId, tenantId));
 	}
 }
