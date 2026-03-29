@@ -1,7 +1,7 @@
 import { pgTable, uuid, timestamp, jsonb, pgEnum } from "drizzle-orm/pg-core";
 import { tenants } from "./tenant.ts";
 
-export const credentialsStatus = pgEnum("handler_type", ["active", "revoked"]);
+export const credentialsStatus = pgEnum("credential_status", ["active", "revoked"]);
 
 export const credentials = pgTable("credentials", {
 	id: uuid("id").defaultRandom().primaryKey(),

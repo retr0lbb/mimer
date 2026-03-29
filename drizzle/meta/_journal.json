@@ -15,6 +15,20 @@
       "when": 1774208920130,
       "tag": "0001_warm_vision",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774826119929,
+      "tag": "0002_regular_apocalypse",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1774826158466,
+      "tag": "0003_luxuriant_ulik",
+      "breakpoints": true
     }
   ]
 }

@@ -5,6 +5,7 @@ import { errorHandler } from "./_errors/handlers.ts";
 import { logToFile } from "./utils/logger.ts";
 import { conversationRoutes } from "./modules/conversation/conversation.route.ts";
 import { wahaWebhookRoutes } from "./modules/webhooks/wa-ha.ts";
+import { gatewayRoutes } from "./modules/message-gateway/gateway.route.ts";
 
 const app = fastify();
 
@@ -41,6 +42,7 @@ app.register(tenantRoutes);
 app.register(conversationRoutes);
 app.register(toolRoutes);
 app.register(wahaWebhookRoutes);
+app.register(gatewayRoutes);
 
 app
 	.listen({

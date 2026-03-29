@@ -1,6 +1,6 @@
 import { FastifyRequest } from "fastify";
 import type { MessageProvider } from "../../types.ts";
-import createWASocket, { type proto } from "baileys";
+import createWASocket, { type proto, type WAConnectionState } from "baileys";
 import type { BaileysAuthStateManager } from "./utils/database-auth-adapter.ts";
 
 interface BaileysWebhookBody {
@@ -9,6 +9,8 @@ interface BaileysWebhookBody {
 
 export class BaileysProvider implements MessageProvider {
 	private socket: ReturnType<typeof createWASocket> | null = null;
+	private currentQr: string | null = null;
+	private connectionStatus: WAConnectionState = "close";
 
 	constructor(private readonly authStateManager: BaileysAuthStateManager) {}
 
@@ -21,6 +23,28 @@ export class BaileysProvider implements MessageProvider {
 		});
 
 		this.socket.ev.on("creds.update", saveCreds);
+
+		this.socket.ev.on("connection.update", (update) => {
+			if (update.qr) {
+				this.currentQr = update.qr;
+			}
+
+			if (update.connection) {
+				this.connectionStatus = update.connection;
+			}
+
+			if (update.connection === "open") {
+				this.currentQr = null;
+			}
+		});
+	}
+
+	getQrCode(): string | null {
+		return this.currentQr;
+	}
+
+	getConnectionStatus(): WAConnectionState {
+		return this.connectionStatus;
 	}
 
 	validateWebHook(req: FastifyRequest): Promise<boolean> {
@@ -47,12 +71,18 @@ export class BaileysProvider implements MessageProvider {
 		return { userIdentifier, text };
 	}
 
-	sendMessage(input: {
+	async sendMessage(input: {
 		tenantId: string;
 		userIdentifier: string;
 		text: string;
 	}): Promise<void> {
-		throw new Error("Method not implemented.");
+		if (!this.socket) {
+			await this.initConnection(input.tenantId);
+		}
+
+		await this.socket!.sendMessage(input.userIdentifier, {
+			text: input.text,
+		});
 	}
 
 	private extractTextFromMessage(

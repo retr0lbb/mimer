@@ -6,6 +6,41 @@ import type {
 	PersistedAuthState,
 } from "../types/auth-state.repository.ts";
 
+function isBufferLike(value: unknown): value is { type: "Buffer"; data: number[] } {
+	return (
+		typeof value === "object" &&
+		value !== null &&
+		"type" in value &&
+		(value as Record<string, unknown>).type === "Buffer" &&
+		"data" in value &&
+		Array.isArray((value as Record<string, unknown>).data)
+	);
+}
+
+function restoreBuffers<T>(obj: T): T {
+	if (obj === null || obj === undefined) {
+		return obj;
+	}
+
+	if (isBufferLike(obj)) {
+		return Buffer.from(obj.data) as unknown as T;
+	}
+
+	if (Array.isArray(obj)) {
+		return obj.map(restoreBuffers) as unknown as T;
+	}
+
+	if (typeof obj === "object") {
+		const restored: Record<string, unknown> = {};
+		for (const key of Object.keys(obj)) {
+			restored[key] = restoreBuffers((obj as Record<string, unknown>)[key]);
+		}
+		return restored as T;
+	}
+
+	return obj;
+}
+
 export class DrizzleAuthStateRepository implements AuthStateRepository {
 	async findByTenantId(tenantId: string): Promise<PersistedAuthState | null> {
 		const [session] = await db
@@ -18,7 +53,10 @@ export class DrizzleAuthStateRepository implements AuthStateRepository {
 			return null;
 		}
 
-		return session as unknown as PersistedAuthState;
+		return {
+			creds: restoreBuffers(session.creds),
+			keys: restoreBuffers(session.keys),
+		} as unknown as PersistedAuthState;
 	}
 
 	async create(tenantId: string, state: PersistedAuthState): Promise<void> {
