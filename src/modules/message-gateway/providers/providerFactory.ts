@@ -1,4 +1,4 @@
-import { MessageProvider } from "../types.ts";
+import type { MessageProvider } from "../types.ts";
 import { WhatsAppProvider } from "./whatsappProvider.ts";
 
 export class MessageProviderFactory {

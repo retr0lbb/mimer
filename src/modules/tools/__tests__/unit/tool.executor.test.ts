@@ -60,7 +60,7 @@ describe("ToolExecutor", () => {
 					tenantId: "test-tenant",
 					name: "test_tool",
 					description: "test tool",
-					schema: {},
+					schema: { type: "object", properties: {} },
 					handlerType: "internal",
 				};
 				mockToolRegistry.getToolByName.mockResolvedValue(tool);
@@ -76,7 +76,7 @@ describe("ToolExecutor", () => {
 					tenantId: "test-tenant",
 					name: "nonexistent_tool",
 					description: "nonexistent tool",
-					schema: {},
+					schema: { type: "object", properties: {} },
 					handlerType: "internal",
 				};
 				mockToolRegistry.getToolByName.mockResolvedValue(tool);
@@ -94,7 +94,7 @@ describe("ToolExecutor", () => {
 					tenantId: "test-tenant",
 					name: "test_tool",
 					description: "test tool",
-					schema: {},
+					schema: { type: "object", properties: {} },
 					handlerType: "http",
 					config: {
 						url: "https://api.example.com/test",
@@ -129,7 +129,7 @@ describe("ToolExecutor", () => {
 					tenantId: "test-tenant",
 					name: "test_tool",
 					description: "test tool",
-					schema: {},
+					schema: { type: "object", properties: {} },
 					handlerType: "http",
 					config: {
 						url: "https://api.example.com/test",
