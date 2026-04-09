@@ -1,15 +1,7 @@
-import type { FastifyRequest } from "fastify";
 import type { MessageProvider } from "../../types.ts";
 
 export class WaHaProvider implements MessageProvider {
 	constructor(private readonly baseUrl: string) {}
-
-	parseIncomingMessage(req: FastifyRequest): {
-		userIdentifier: string;
-		text: string;
-	} {
-		throw new Error("Method not implemented.");
-	}
 
 	async sendMessage(input: {
 		chatId: string;
