@@ -4,7 +4,8 @@ import { toolRoutes } from "./modules/tools/tools.routes.ts";
 import { errorHandler } from "./_errors/handlers.ts";
 import { logToFile } from "./utils/logger.ts";
 import { conversationRoutes } from "./modules/conversation/conversation.route.ts";
-import { wahaWebhookRoutes } from "./modules/webhooks/wa-ha.ts";
+import { wahaWebHook } from "./modules/webhooks/wa-ha.ts";
+import { env } from "./config/env.ts";
 
 const app = fastify();
 
@@ -40,11 +41,11 @@ app.decorateRequest("tenant", null);
 app.register(tenantRoutes);
 app.register(conversationRoutes);
 app.register(toolRoutes);
-app.register(wahaWebhookRoutes);
+app.register(wahaWebHook);
 
 app
 	.listen({
-		port: 3333,
+		port: env.PORT,
 	})
 	.then((_) => {
 		console.log("HTTP SERVER RUNNING on 3333");
